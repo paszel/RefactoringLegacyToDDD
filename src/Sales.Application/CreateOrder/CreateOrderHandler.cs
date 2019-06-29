@@ -1,30 +1,22 @@
-﻿using System.Data.SqlClient;
-using Dapper;
-using Sales.Domain;
+﻿using Sales.Domain;
 
-namespace Sales.Application
+namespace Sales.Application.CreateOrder
 {
   public class CreateOrderHandler : ICommandHandler<CreateOrderCommand>
   {
-    private readonly IConfiguration _configuration;
     private readonly IOrderFactory _orderFactory;
+    private readonly IOrderRepository _orderRepository;
 
-    public CreateOrderHandler(IConfiguration configuration, IOrderFactory orderFactory)
+    public CreateOrderHandler(IOrderFactory orderFactory, IOrderRepository orderRepository)
     {
-      _configuration = configuration;
       _orderFactory = orderFactory;
+      _orderRepository = orderRepository;
     }
 
     public void Handle(CreateOrderCommand command)
     {
       Order o = _orderFactory.Create(command.Id, command.ClientId);
-      
-      CreateConnection().Execute("INSERT INTO [Order](id,number,clientId) VALUES(@id,@number,@clientId)", o);
-    }
-
-    private SqlConnection CreateConnection()
-    {
-      return new SqlConnection(_configuration["connectionString"]);
+      _orderRepository.Save(o);
     }
   }
 }

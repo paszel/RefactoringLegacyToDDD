@@ -21,7 +21,7 @@ namespace PhotoStock.Tests.Sales.Infrastructure
       Order o;
       using (OrderContext ctx = new OrderContext(connectionString))
       {
-        OrderRepository orderRepository = new OrderRepository(ctx, new FakeBus());
+        IOrderRepository orderRepository = new OrderRepository(ctx, new FakeBus());
 
         o = new OrderFactory(new TestNumberGenerator(), new TestBus()).Create("12", "client123");
         o.AddProduct(TestSeeding.ProductId);
@@ -31,7 +31,7 @@ namespace PhotoStock.Tests.Sales.Infrastructure
 
       using (OrderContext ctx = new OrderContext(connectionString))
       {
-        OrderRepository orderRepository = new OrderRepository(ctx, new FakeBus());
+        IOrderRepository orderRepository = new OrderRepository(ctx, new FakeBus());
 
         Order o2 = orderRepository.Get(o.Id);
         

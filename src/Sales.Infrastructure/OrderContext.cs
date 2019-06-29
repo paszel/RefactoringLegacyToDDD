@@ -21,11 +21,19 @@ namespace Sales.Infrastructure
     {
       modelBuilder.Entity<Order>(c =>
       {
-        // map goeas here
+        c.ToTable("Order");
+        c.HasKey("_id");
+        c.Property("_id").HasColumnName("id");
+        c.Property("_status").HasColumnName("status");
+        c.Property("_number").HasColumnName("number");
+        c.Property("_clientId").HasColumnName("clientId");
+        c.HasMany<OrderItem>("_products");
       });
       modelBuilder.Entity<OrderItem>(c =>
       {
-        // map goes here
+        c.ToTable("OrderItem");
+        c.HasOne(x => x.Order).WithMany("_products").HasForeignKey("OrderId");
+        c.Property<string>(f => f.ProductId);
       });
     }
 

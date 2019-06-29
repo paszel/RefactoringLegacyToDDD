@@ -6,40 +6,40 @@ namespace Sales.Domain
 {
   public class Order : AggregateRoot
   {
-    public List<OrderItem> Products { get; set; }
-    public OrderStatus Status { get; set; }
-    public string ClientId { get; set; }
-    public string Number { get; set; }
+    private List<OrderItem> _products = new List<OrderItem>();
+    private OrderStatus _status;
+    private string _clientId;
+    private string _number;
 
     protected Order() : base(null)
     { }
 
     internal Order(string clientId, string id, string number, OrderStatus status) : base(id)
     {
-      ClientId = clientId;
-      Number = number;
-      Status = status;
-      Products = new List<OrderItem>();
+      _clientId = clientId;
+      _number = number;
+      _status = status;
+      _products = new List<OrderItem>();
     }
 
     public void AddProduct(string productId)
     {
-      if (Status != OrderStatus.New)
+      if (_status != OrderStatus.New)
       {
         throw new NotFoundException();
       }
 
-      if (Products.FirstOrDefault(f => f.ProductId == productId) != null)
+      if (_products.FirstOrDefault(f => f.ProductId == productId) != null)
       {
         throw new AlreadyExistsException("Product already exists");
       }
 
-      Products.Add(new OrderItem(){ ProductId = productId });
+      _products.Add(new OrderItem(){ ProductId = productId });
     }
 
     public Offer CalculateOffer(IDiscountCalculator discountCalculator, IProductRepository productRepository)
     {
-      if (Status != OrderStatus.New)
+      if (_status != OrderStatus.New)
       {
         throw new NotFoundException();
       }
@@ -48,7 +48,7 @@ namespace Sales.Domain
       List<OfferItem> unavailableItems = new List<OfferItem>();
 
       decimal totalCost = 0;
-      foreach (var orderItem in Products)
+      foreach (var orderItem in _products)
       {
         Product product = productRepository.Get(orderItem.ProductId);
         if (product.Aviable)
@@ -77,24 +77,24 @@ namespace Sales.Domain
         ProductType = f.ProductType
       }));
 
-      return new Offer(ClientId, totalCost - discount, discount, availabeItems, unavailableItems);
+      return new Offer(_clientId, totalCost - discount, discount, availabeItems, unavailableItems);
     }
 
     public bool SameAs(Order order)
     {
-      return ClientId == order.ClientId
-             && Status == order.Status
-             && SameProducts(order.Products);
+      return _clientId == order._clientId
+             && _status == order._status
+             && SameProducts(order._products);
     }
 
     private bool SameProducts(List<OrderItem> products)
     {
-      if (Products.Count != products.Count)
+      if (_products.Count != products.Count)
       {
         return false;
       }
 
-      foreach (OrderItem item in Products)
+      foreach (OrderItem item in _products)
       {
         var r = products.FirstOrDefault(f => f.Id == item.Id);
         if (r == null || r.ProductId != item.ProductId)

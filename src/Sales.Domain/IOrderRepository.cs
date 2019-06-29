@@ -6,6 +6,7 @@ namespace Sales.Domain
 {
   public interface IOrderRepository 
   {
-    
+    Order Get(string orderId);
+    void Save(Order order);
   }
 }
