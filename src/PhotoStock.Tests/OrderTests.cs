@@ -35,7 +35,7 @@ namespace PhotoStock.Tests
 
       Bootstrap.Run(new string[0], builder => { builder.RegisterInstance(_smtpClient).AsImplementedInterfaces(); }, connectionString);
       
-      _clientId = TestSeeding.ClientId;
+      _clientId = "aaa111";
     }
 
     [Test]
@@ -47,9 +47,8 @@ namespace PhotoStock.Tests
       Product product = products.First(f => f.Name == "Rysunek1");
 
       await _api.AddProductToOrder(orderId, product.Id);
-      
+
       Offer offer = await _api.CalculateOffer(orderId);
-      
       await _api.Confirm(orderId, offer);
 
       Shipment shipment = await _api.GetShipment(orderId);

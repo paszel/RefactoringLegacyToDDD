@@ -1,5 +1,5 @@
 ﻿using System.Net.Mail;
-using PhotoStock.Infrastructure;
+using Sales.Domain;
 
 namespace PhotoStock.Controllers
 {
@@ -21,15 +21,13 @@ namespace PhotoStock.Controllers
     private readonly ISmtpClient _smtpClient;
     private readonly INumberGenerator _numberGenerator;
     private readonly IDiscountCalculator _discountCalculator;
-    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, INumberGenerator numberGenerator, IDiscountCalculator discountCalculator, IDateTimeProvider dateTimeProvider)
+    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, INumberGenerator numberGenerator, IDiscountCalculator discountCalculator)
     {
       _configuration = configuration;
       _smtpClient = smtpClient;
       _numberGenerator = numberGenerator;
       _discountCalculator = discountCalculator;
-      _dateTimeProvider = dateTimeProvider;
     }
 
     [HttpPost("CreateOrder")]
@@ -113,7 +111,11 @@ namespace PhotoStock.Controllers
         }
       }
 
-      decimal discount = _discountCalculator.Calculate(_dateTimeProvider.Today, availabeItems);
+      decimal discount = _discountCalculator.Calculate(availabeItems.Select(f=>new OfferItem()
+      {
+        Name = f.Name,
+        ProductType = (Sales.Domain.ProductType)f.ProductType
+      }));
       
       return new OfferDto(o.ClientId, totalCost-discount, discount, availabeItems, unavailableItems);
     }

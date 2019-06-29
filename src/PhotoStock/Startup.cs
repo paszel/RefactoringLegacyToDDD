@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PhotoStock.Infrastructure;
+using Sales.Infrastructure;
 
 namespace PhotoStock
 {
@@ -30,6 +31,7 @@ namespace PhotoStock
       var builder = new ContainerBuilder();
       string connectionString = Configuration["ConnectionString"];
       builder.RegisterModule(new AutofacInfrastructureModule(connectionString));
+      builder.RegisterModule(new AutofacSalesModule(connectionString));
       RegisterExternalTypes(builder);
 
       builder.Populate(services);

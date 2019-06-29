@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using PhotoStock.Controllers;
+using Sales.Domain;
 
 namespace PhotoStock.Infrastructure
 {
