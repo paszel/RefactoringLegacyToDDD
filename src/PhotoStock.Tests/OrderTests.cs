@@ -25,7 +25,6 @@ namespace PhotoStock.Tests
     private readonly IApi _api = RestClient.For<IApi>(_url);
     private string _clientId;
     private SmtpTestClient _smtpClient;
-    private ConfigurationRoot _configuration;
 
     [OneTimeSetUp]
     public void Setup()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Autofac;
 using Microsoft.Extensions.Logging;
 using Sales.Application;
+using Sales.Domain;
 
 namespace PhotoStock.Infrastructure
 {

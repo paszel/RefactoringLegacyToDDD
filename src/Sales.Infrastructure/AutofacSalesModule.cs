@@ -29,6 +29,7 @@ namespace Sales.Infrastructure
       builder.RegisterType<CreateOrderHandler>().AsImplementedInterfaces();
       builder.RegisterType<AddProductHandler>().AsImplementedInterfaces();
       builder.RegisterType<CalculateOfferHandler>().AsImplementedInterfaces();
+      builder.RegisterType<OrderFactory>().AsImplementedInterfaces();
     }
   }
 }

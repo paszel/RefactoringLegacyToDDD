@@ -24,11 +24,11 @@ namespace PhotoStock.Controllers
   {
     private readonly IConfiguration _configuration;
     private readonly ISmtpClient _smtpClient;
-    private readonly ICalculateOfferQueryHandler _calculateOfferHandler;
+    private readonly ICalculateOfferHandler _calculateOfferHandler;
     private readonly ICommandBus _commandBus;
 
     public ApiController(IConfiguration configuration, ISmtpClient smtpClient, 
-      ICalculateOfferQueryHandler calculateOfferHandler, ICommandBus commandBus)
+      ICalculateOfferHandler calculateOfferHandler, ICommandBus commandBus)
     {
       _configuration = configuration;
       _smtpClient = smtpClient;

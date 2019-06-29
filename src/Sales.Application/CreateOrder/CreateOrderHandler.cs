@@ -7,20 +7,18 @@ namespace Sales.Application
   public class CreateOrderHandler : ICommandHandler<CreateOrderCommand>
   {
     private readonly IConfiguration _configuration;
-    private readonly INumberGenerator _numberGenerator;
+    private readonly IOrderFactory _orderFactory;
 
-    public CreateOrderHandler(IConfiguration configuration, INumberGenerator numberGenerator)
+    public CreateOrderHandler(IConfiguration configuration, IOrderFactory orderFactory)
     {
       _configuration = configuration;
-      _numberGenerator = numberGenerator;
+      _orderFactory = orderFactory;
     }
 
     public void Handle(CreateOrderCommand command)
     {
-      string number = _numberGenerator.GenerateNumber();
-
-      Order o = new Order() { ClientId = command.ClientId, Id = command.Id, Number = number, Status = OrderStatus.New };
-
+      Order o = _orderFactory.Create(command.Id, command.ClientId);
+      
       CreateConnection().Execute("INSERT INTO [Order](id,number,clientId) VALUES(@id,@number,@clientId)", o);
     }
 

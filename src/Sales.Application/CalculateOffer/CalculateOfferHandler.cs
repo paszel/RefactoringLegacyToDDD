@@ -6,7 +6,7 @@ using Sales.Domain.Discount;
 
 namespace Sales.Application.CalculateOffer
 {
-  public class CalculateOfferHandler : ICalculateOfferQueryHandler
+  public class CalculateOfferHandler : ICalculateOfferHandler
   {
     private readonly IConfiguration _configuration;
     private readonly IDiscountCalculator _discountCalculator;

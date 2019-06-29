@@ -39,7 +39,7 @@ namespace PhotoStock
           client.GetStringAsync("http://localhost:5000/api/products").Wait();
           break;
         }
-        catch (Exception e)
+        catch (Exception)
         {
           Console.WriteLine($"Connecting ({i}) ...");
           if (i == 9)

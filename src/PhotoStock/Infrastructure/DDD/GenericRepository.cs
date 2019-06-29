@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using PhotoStock.Infrastructure.DDD;
+using Sales.Domain;
 
 namespace PhotoStock.Infrastructure.DDD
 {
