@@ -12,5 +12,6 @@ namespace Sales.Domain.Product
     public bool Aviable { get; set; }
     public string Id { get; set; }
     public string Name { get; set; }
+    public ProductType ProductType { get; set; }
   }
 }

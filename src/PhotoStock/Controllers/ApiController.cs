@@ -1,13 +1,14 @@
 ﻿using System.Net.Mail;
 using PhotoStock.BusInterfaces;
 using PhotoStock.Infrastructure;
-using Processes;
+using Process.OrderConfirmationProcess;
 using Sales.Application;
 using Sales.Application.AddProduct;
 using Sales.Application.CalculateOffer;
 using Sales.Application.CreateOrder;
 using Sales.Domain;
 using Sales.Domain.Discount;
+using Sales.Domain.Offer;
 
 namespace PhotoStock.Controllers
 {
@@ -101,61 +102,13 @@ namespace PhotoStock.Controllers
         seenOffer.ClientId, 
         seenOffer.TotalCost,
         seenOffer.Discount,
-        seenOffer.AvailabeItems.Select(f=>new OfferItem(f.Id,f.Name,f.Price, (Sales.Domain.Product.ProductType)f.ProductType,f.Discount)).ToList(),
-        seenOffer.UnavailableItems.Select(f => new OfferItem(f.Id, f.Name, f.Price, (Sales.Domain.Product.ProductType)f.ProductType, f.Discount)).ToList())));
+        seenOffer.AvailabeItems.Select(f=>new OfferItem(f.Id,f.Name,f.Price, (Sales.Domain.Product.ProductType)f.ProductType)).ToList(),
+        seenOffer.UnavailableItems.Select(f => new OfferItem(f.Id, f.Name, f.Price, (Sales.Domain.Product.ProductType)f.ProductType)).ToList())));
 
-      ConfirmOrder(orderId, seenOffer);
-
-      CreateShipment(orderId);
-
-      SendConfirmation(orderId);
-
-      CreateInvoice(orderId, seenOffer);
-      
       return Ok();
     }
 
-    private void CreateInvoice(string orderId, OfferDto seenOffer)
-    {
-      InvoiceType invoiceType = CreateConnection().QueryFirst<InvoiceType>("select c.invoiceType from Client c where id = @clientId", new { seenOffer.ClientId });
-
-      decimal net = seenOffer.TotalCost;
-      decimal tax = seenOffer.AvailabeItems.Sum(f => CalculateTax(f.ProductType, f.Price));
-
-      string invoiceNumber = GenerateNumber(invoiceType);
-      CreateConnection().Execute("insert into Invoice(orderId, number, net_amount, tax_amount)values(@id, @number, @net, @tax)", new { id = orderId, number = invoiceNumber, net, tax });
-
-      foreach (var oProduct in seenOffer.AvailabeItems)
-      {
-        tax = CalculateTax(oProduct.ProductType, oProduct.Price);
-        CreateConnection()
-          .Execute("insert into InvoiceItem(invoiceId, productName, net_amount, tax_amount)values(@invoiceId, @productName, @net, @tax)",
-            new { invoiceId = orderId, productName = oProduct.Name, net, tax });
-      }
-
-    }
-
-    private void SendConfirmation(string orderId)
-    {
-      var order = GetOrderInternal(orderId);
-
-      string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
-
-      _smtpClient.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
-
-    }
-
-    private void CreateShipment(string orderId)
-    {
-      CreateConnection().Execute("insert into Shipment(orderId, status)values(@id, 1)", new { id = orderId });
-    }
-
-    private void ConfirmOrder(string orderId, OfferDto seenOffer)
-    {
-      
-      return Ok();
-    }
-
+   
     [HttpGet("Shipments/{orderId}")]
     public ActionResult<ShipmentDto> GetShipment([FromRoute] string orderId)
     {
@@ -187,37 +140,7 @@ namespace PhotoStock.Controllers
     private SqlConnection CreateConnection()
     {
       return new SqlConnection(_configuration["connectionString"]);
-    }
-
-    private string GenerateNumber(InvoiceType invoiceType)
-    {
-      int nr = CreateConnection().QueryFirst<int>(
-        "select number from LastInvoiceNumber where invoiceType = @invoiceType;update LastInvoiceNumber set number = number + 1 where invoiceType = @invoiceType",
-        new { invoiceType });
-
-      return $"FV {DateTime.Today.Year}/{nr}";
-    }
-
-    public decimal CalculateTax(ProductType productType, decimal net)
-    {
-      decimal ratio;
-
-      switch (productType)
-      {
-        case ProductType.Printed:
-          ratio = 0.05M;
-          break;
-
-        case ProductType.Electronic:
-          ratio = 0.23M;
-          break;
-
-        default:
-          throw new ArgumentOutOfRangeException(productType + " not Handled");
-      }
-
-      return net * ratio;
-    }
+    }    
     #endregion
   }
 }

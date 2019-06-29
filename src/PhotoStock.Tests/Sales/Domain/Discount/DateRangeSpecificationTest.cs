@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using Sales.Domain;
 using Sales.Domain.Discount;
+using Sales.Domain.Offer;
 
 namespace PhotoStock.Tests.Sales.Domain.Discount
 {

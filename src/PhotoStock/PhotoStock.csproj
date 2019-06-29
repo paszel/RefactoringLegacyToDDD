@@ -21,9 +21,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PhotoStock.BusInterfaces\PhotoStock.BusInterfaces.csproj" />
+    <ProjectReference Include="..\Process\Process.csproj" />
     <ProjectReference Include="..\Sales.Application\Sales.Application.csproj" />
     <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
     <ProjectReference Include="..\Sales.Infrastructure\Sales.Infrastructure.csproj" />
+    <ProjectReference Include="..\Shipment.Application\Shipment.Application.csproj" />
   </ItemGroup>
 
 </Project>

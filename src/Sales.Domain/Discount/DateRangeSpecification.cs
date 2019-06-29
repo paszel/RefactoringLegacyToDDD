@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sales.Domain.Offer;
 using Sales.Domain.Specification;
 
 namespace Sales.Domain.Discount

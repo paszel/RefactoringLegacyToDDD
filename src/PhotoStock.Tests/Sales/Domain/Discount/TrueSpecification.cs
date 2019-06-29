@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Sales.Domain;
+using Sales.Domain.Offer;
 using Sales.Domain.Specification;
 
 namespace PhotoStock.Tests.Sales.Domain.Discount

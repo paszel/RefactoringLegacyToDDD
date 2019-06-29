@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Sales.Domain;
+using Sales.Domain.Offer;
 
 namespace Sales.Infrastructure
 {

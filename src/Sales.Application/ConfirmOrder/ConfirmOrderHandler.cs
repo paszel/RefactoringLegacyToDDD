@@ -3,6 +3,7 @@ using System.Xml.Serialization;
 using PhotoStock.BusInterfaces;
 using Sales.Domain;
 using Sales.Domain.Discount;
+using Sales.Domain.Offer;
 using Sales.Domain.Product;
 using Sales.Domain.Purchase;
 

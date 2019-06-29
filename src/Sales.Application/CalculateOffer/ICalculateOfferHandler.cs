@@ -1,4 +1,5 @@
 ﻿using Sales.Domain;
+using Sales.Domain.Offer;
 
 namespace Sales.Application.CalculateOffer
 {

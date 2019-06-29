@@ -5,6 +5,7 @@ using Sales.Application.CalculateOffer;
 using Sales.Application.CreateOrder;
 using Sales.Domain;
 using Sales.Domain.Discount;
+using Sales.Domain.Offer;
 
 namespace Sales.Infrastructure
 {
@@ -33,6 +34,7 @@ namespace Sales.Infrastructure
       builder.RegisterType<OrderFactory>().AsImplementedInterfaces();
       builder.RegisterType<OrderRepository>().AsImplementedInterfaces();
       builder.RegisterType<EventPublisherAdapter>().AsImplementedInterfaces();
+      builder.RegisterType<ConfirmOrderHandler>().AsImplementedInterfaces();
       builder.RegisterType<OrderContext>().WithParameter("connectionString", _connectionString);
     }
   }

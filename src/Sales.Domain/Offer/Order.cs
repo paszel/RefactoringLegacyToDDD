@@ -4,7 +4,7 @@ using System.Linq;
 using Sales.Domain.Discount;
 using Sales.Domain.Product;
 
-namespace Sales.Domain
+namespace Sales.Domain.Offer
 {
   public class Order : AggregateRoot
   {
@@ -39,7 +39,7 @@ namespace Sales.Domain
       _products.Add(new OrderItem(){ ProductId = productId });
     }
 
-    public Offer CalculateOffer(IDiscountCalculator discountCalculator, IProductRepository productRepository)
+    public Domain.Offer.Offer CalculateOffer(IDiscountCalculator discountCalculator, IProductRepository productRepository)
     {
       if (_status != OrderStatus.New)
       {
@@ -55,31 +55,22 @@ namespace Sales.Domain
         Product.Product product = productRepository.Get(orderItem.ProductId);
         if (product.Aviable)
         {
-          OfferItem offerItem = new OfferItem()
-          {
-            Id = product.Id,
-            Name = product.Name,
-            Price = product.Price
-          };
+          OfferItem offerItem = new OfferItem(product.Id,product.Name,product.Price,product.ProductType);
 
           availabeItems.Add(offerItem);
           totalCost += offerItem.Price;
         }
         else
         {
-          OfferItem offerItem = new OfferItem { Id = product.Id, Name = product.Name, Price = product.Price };
+          OfferItem offerItem = new OfferItem(product.Id, product.Name, product.Price, product.ProductType);
 
           unavailableItems.Add(offerItem);
         }
       }
 
-      decimal discount = discountCalculator.Calculate(availabeItems.Select(f => new OfferItem()
-      {
-        Name = f.Name,
-        ProductType = f.ProductType
-      }));
+      decimal discount = discountCalculator.Calculate(availabeItems);
 
-      return new Offer(_clientId, totalCost - discount, discount, availabeItems, unavailableItems);
+      return new Domain.Offer.Offer(_clientId, totalCost - discount, discount, availabeItems, unavailableItems);
     }
 
     public void SetStatus(OrderStatus status)
@@ -113,10 +104,10 @@ namespace Sales.Domain
       return true;
     }
 
-    public void Confirm(Offer seenOffer, IDiscountCalculator discountCalculator,
+    public void Confirm(Domain.Offer.Offer seenOffer, IDiscountCalculator discountCalculator,
       IProductRepository productRepository)
     {
-      Offer current = CalculateOffer(discountCalculator, productRepository);
+      Domain.Offer.Offer current = CalculateOffer(discountCalculator, productRepository);
 
       if (current.SameAs(seenOffer))
       {

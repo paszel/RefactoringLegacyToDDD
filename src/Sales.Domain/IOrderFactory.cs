@@ -1,4 +1,6 @@
-﻿namespace Sales.Domain
+﻿using Sales.Domain.Offer;
+
+namespace Sales.Domain
 {
   public interface IOrderFactory
   {

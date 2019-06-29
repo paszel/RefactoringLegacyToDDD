@@ -5,14 +5,14 @@ namespace Sales.Domain.Purchase
 {
   public interface IPurchaseFactory
   {
-    Purchase Create(string orderId, Offer offer);
+    Purchase Create(string orderId, Offer.Offer offer);
   }
 
   class PurchaseFactory : IPurchaseFactory
   {
-    public Purchase Create(string orderId, Offer offer)
+    public Purchase Create(string orderId, Offer.Offer offer)
     {
-      XmlSerializer xmlSerializer = new XmlSerializer(typeof(Offer));
+      XmlSerializer xmlSerializer = new XmlSerializer(typeof(Offer.Offer));
       using (StringWriter sw = new StringWriter())
       {
         xmlSerializer.Serialize((TextWriter) sw, (object) offer);

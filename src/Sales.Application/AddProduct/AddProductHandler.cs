@@ -3,6 +3,7 @@ using System.Linq;
 using Dapper;
 using PhotoStock.BusInterfaces;
 using Sales.Domain;
+using Sales.Domain.Offer;
 
 namespace Sales.Application.AddProduct
 {

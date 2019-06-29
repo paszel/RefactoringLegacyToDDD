@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Sales.Domain.Offer;
 using Sales.Domain.Product;
 using Sales.Domain.Specification;
 

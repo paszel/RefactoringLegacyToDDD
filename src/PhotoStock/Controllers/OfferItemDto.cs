@@ -6,6 +6,5 @@
     public decimal Price { get; set; }
     public string Id { get; set; }
     public ProductType ProductType { get; set; }
-    public decimal Discount { get; set; }
   }
 }

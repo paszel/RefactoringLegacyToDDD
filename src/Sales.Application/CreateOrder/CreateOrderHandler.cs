@@ -1,5 +1,6 @@
 ﻿using PhotoStock.BusInterfaces;
 using Sales.Domain;
+using Sales.Domain.Offer;
 
 namespace Sales.Application.CreateOrder
 {

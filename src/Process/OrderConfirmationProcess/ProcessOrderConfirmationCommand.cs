@@ -1,7 +1,6 @@
-﻿using Sales.Domain;
-using Sales.Domain.Offer;
+﻿using Sales.Domain.Offer;
 
-namespace Processes
+namespace Process.OrderConfirmationProcess
 {
   public class ProcessOrderConfirmationCommand
   {

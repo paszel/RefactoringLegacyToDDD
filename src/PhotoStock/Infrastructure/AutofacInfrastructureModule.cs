@@ -33,7 +33,6 @@ namespace PhotoStock.Infrastructure
                     //&& !t.IsAssignableTo<AggregateRoot>()
           ).AsImplementedInterfaces();
 
-      builder.RegisterType<SmtpClientWrapper>().AsImplementedInterfaces();
       builder.RegisterType<NumberGenerator>().AsImplementedInterfaces();
       builder.RegisterType<DiscountCalculator>().AsImplementedInterfaces();
       

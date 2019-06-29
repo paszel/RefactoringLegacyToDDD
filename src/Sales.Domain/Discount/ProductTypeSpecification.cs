@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Sales.Domain.Offer;
 using Sales.Domain.Product;
 using Sales.Domain.Specification;
 

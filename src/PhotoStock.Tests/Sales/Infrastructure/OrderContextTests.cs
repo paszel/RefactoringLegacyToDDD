@@ -6,6 +6,7 @@ using PhotoStock.Infrastructure;
 using PhotoStock.Tests.Infrastructure;
 using PhotoStock.Tests.Migrations;
 using Sales.Domain;
+using Sales.Domain.Offer;
 using Sales.Infrastructure;
 
 namespace PhotoStock.Tests.Sales.Infrastructure

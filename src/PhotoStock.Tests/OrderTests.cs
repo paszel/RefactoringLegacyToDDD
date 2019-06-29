@@ -93,7 +93,7 @@ namespace PhotoStock.Tests
       Offer offer = await _api.CalculateOffer(orderId);
       await _api.Confirm(orderId, offer);
 
-      Shipment shipment = await _api.GetShipment(orderId);
+      Contract.Shipment shipment = await _api.GetShipment(orderId);
 
       Assert.AreEqual(ShipmentStatus.WAITING, shipment.Status);
       Assert.AreEqual(1, _smtpClient.SentEmails.Count);
@@ -101,7 +101,7 @@ namespace PhotoStock.Tests
 
       await _api.Shipped(orderId);
 
-      Shipment shipment2 = await _api.GetShipment(orderId);
+      Contract.Shipment shipment2 = await _api.GetShipment(orderId);
 
       Assert.AreEqual(ShipmentStatus.SHIPPED, shipment2.Status);
       Assert.AreEqual(2, _smtpClient.SentEmails.Count);
