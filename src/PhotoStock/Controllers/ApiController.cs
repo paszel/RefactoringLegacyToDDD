@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using Sales.Application;
 using Sales.Domain;
 
 namespace PhotoStock.Controllers
@@ -21,26 +22,23 @@ namespace PhotoStock.Controllers
     private readonly ISmtpClient _smtpClient;
     private readonly INumberGenerator _numberGenerator;
     private readonly IDiscountCalculator _discountCalculator;
+    private readonly IOrderService _orderService;
 
-    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, INumberGenerator numberGenerator, IDiscountCalculator discountCalculator)
+    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, INumberGenerator numberGenerator, IDiscountCalculator discountCalculator, IOrderService orderService)
     {
       _configuration = configuration;
       _smtpClient = smtpClient;
       _numberGenerator = numberGenerator;
       _discountCalculator = discountCalculator;
+      _orderService = orderService;
     }
 
     [HttpPost("CreateOrder")]
     public ActionResult<string> CreateOrder([FromQuery]string clientId)
     {
-      string number = _numberGenerator.GenerateNumber();
-      string id = Guid.NewGuid().ToString();
-      CreateConnection().Execute("INSERT INTO [Order](id,number,clientId) VALUES(@id,@number,@clientId)",
-        new { id, number, clientId });
-
+      string id = _orderService.CreateOrder(clientId);
       return Created($"api/Order/{id}", id);
     }
-
     
 
     [HttpGet("Products")]
@@ -57,20 +55,18 @@ namespace PhotoStock.Controllers
     [HttpPost("Order/{id}/AddProduct")]
     public ActionResult AddProductToOrder([FromRoute] string id, [FromQuery] string productId)
     {
-      OrderDto order = GetOrderInternal(id);
-      if (order.Status != OrderStatus.New)
+      try
+      {
+        _orderService.AddProduct(id, productId);
+      }
+      catch (AlreadyExistsException)
+      {
+        return BadRequest();
+      }
+      catch (NotFoundException)
       {
         return NotFound();
       }
-
-      if (order.Products.FirstOrDefault(f => f.Id == productId) != null)
-      {
-        return BadRequest("Product already exists");
-      }
-
-      CreateConnection().Execute(
-        "insert into OrderItem(orderId, productId)values(@orderId,@productId)",
-        new { orderId = id, productId });
 
       return Ok();
     }
@@ -111,13 +107,13 @@ namespace PhotoStock.Controllers
         }
       }
 
-      decimal discount = _discountCalculator.Calculate(availabeItems.Select(f=>new OfferItem()
+      decimal discount = _discountCalculator.Calculate(availabeItems.Select(f => new OfferItem()
       {
         Name = f.Name,
         ProductType = (Sales.Domain.ProductType)f.ProductType
       }));
-      
-      return new OfferDto(o.ClientId, totalCost-discount, discount, availabeItems, unavailableItems);
+
+      return new OfferDto(o.ClientId, totalCost - discount, discount, availabeItems, unavailableItems);
     }
 
     [HttpPost("Order/{orderId}/Confirm")]
@@ -207,7 +203,7 @@ namespace PhotoStock.Controllers
       OrderDto order = GetOrderInternal(orderId);
 
       string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
-      
+
       _smtpClient.Send("no-reply@photostock.com", email, "Shipment confirmation", $"your order number : {order.Number} ha been shipped");
 
       return Ok();

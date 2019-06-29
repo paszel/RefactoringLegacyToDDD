@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Sales.Application;
 using Sales.Domain;
 
 namespace Sales.Infrastructure
@@ -17,6 +18,7 @@ namespace Sales.Infrastructure
       builder.RegisterType<NumberGenerator>().AsImplementedInterfaces();
       builder.RegisterType<DiscountCalculator>().AsImplementedInterfaces();
       builder.RegisterType<DateTimeProvider>().AsImplementedInterfaces();
+      builder.RegisterType<OrderService>().AsImplementedInterfaces();
       builder.RegisterType<ConfigurationWrapper>().AsImplementedInterfaces();
     }
   }

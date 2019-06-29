@@ -18,7 +18,7 @@ namespace PhotoStock.Infrastructure
     {
       builder.RegisterType<Bus>().AsImplementedInterfaces();
       builder.RegisterType<DateTimeProvider>().AsImplementedInterfaces();
-
+      
       //builder.RegisterType<InvoiceContext>().WithParameter("connectionString", _connectionString);
       //builder.RegisterType<ProductContext>().WithParameter("connectionString", _connectionString);
       //builder.RegisterType<ShipmentContext>().WithParameter("connectionString", _connectionString);
@@ -35,7 +35,7 @@ namespace PhotoStock.Infrastructure
       builder.RegisterType<SmtpClientWrapper>().AsImplementedInterfaces();
       builder.RegisterType<NumberGenerator>().AsImplementedInterfaces();
       builder.RegisterType<DiscountCalculator>().AsImplementedInterfaces();
-
+      
       //builder.Register(f => f.Resolve<IDiscountFactory>().Create()).AsImplementedInterfaces();
     }
   }

@@ -52,12 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Database.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Controllers\" />
   </ItemGroup>
 

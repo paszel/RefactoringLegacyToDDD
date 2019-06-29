@@ -24,7 +24,7 @@ namespace PhotoStock.Tests.Sales.Domain
     {
       // Setup
       IEnumerable<OfferItem> availabeItems = new OfferItem[]{ new OfferItem(){ Id = "1", Name = "test", Price = 10, ProductType = global::Sales.Domain.ProductType.Printed} };
-      _dateTimeProviderMock.Setup(f => f.Today).Returns(new DateTime(2020, 7, 7));
+      _dateTimeProviderMock.Setup(f => f.Today).Returns(new DateTime(2020, 12, 24));
 
       // Act
       var result = _sut.Calculate(availabeItems);

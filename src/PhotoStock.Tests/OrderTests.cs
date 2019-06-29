@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
 using NUnitTestProject1;
 using PhotoStock.Controllers;
@@ -33,9 +35,46 @@ namespace PhotoStock.Tests
 
       _smtpClient = new SmtpTestClient();
 
-      Bootstrap.Run(new string[0], builder => { builder.RegisterInstance(_smtpClient).AsImplementedInterfaces(); }, connectionString);
+      Bootstrap.Run(new string[0], builder =>
+      {
+        builder.RegisterInstance(_smtpClient).AsImplementedInterfaces();        
+      }, connectionString);
       
       _clientId = "aaa111";
+    }
+
+    [Test]
+    public async Task AddProductToOrder_should_return_not_found_when_order_confirmed()
+    {
+      // Setup
+      string orderId = await _api.CreateOrder(_clientId);
+      var products = await _api.GetProducts(null, 10);
+      Product product = products.First(f => f.Name == "Rysunek1");
+
+      await _api.AddProductToOrder(orderId, product.Id);
+      Offer offer = await _api.CalculateOffer(orderId);
+      await _api.Confirm(orderId, offer);
+
+      ApiException exception = Assert.ThrowsAsync<ApiException>(
+        async () => await _api.AddProductToOrder(orderId, product.Id));
+
+      Assert.AreEqual(HttpStatusCode.NotFound, exception.StatusCode);
+    }
+
+    [Test]
+    public async Task AddProductToOrder_should_return_bad_request_when_product_added()
+    {
+      // Setup
+      string orderId = await _api.CreateOrder(_clientId);
+      var products = await _api.GetProducts(null, 10);
+      Product product = products.First(f => f.Name == "Rysunek1");
+
+      await _api.AddProductToOrder(orderId, product.Id);
+
+      ApiException exception = Assert.ThrowsAsync<ApiException>(
+        async () => await _api.AddProductToOrder(orderId, product.Id));
+
+      Assert.AreEqual(HttpStatusCode.BadRequest, exception.StatusCode);
     }
 
     [Test]
@@ -49,7 +88,7 @@ namespace PhotoStock.Tests
       await _api.AddProductToOrder(orderId, product.Id);
 
       Offer offer = await _api.CalculateOffer(orderId);
-      await _api.Confirm(orderId, offer);
+      await _api.Confirm(orderId, offer);    
 
       Shipment shipment = await _api.GetShipment(orderId);
 
