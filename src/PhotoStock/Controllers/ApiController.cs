@@ -1,5 +1,7 @@
 ﻿using System.Net.Mail;
 using Sales.Application;
+using Sales.Application.AddProduct;
+using Sales.Application.CalculateOffer;
 using Sales.Domain;
 using Sales.Domain.Discount;
 
@@ -21,24 +23,27 @@ namespace PhotoStock.Controllers
   {
     private readonly IConfiguration _configuration;
     private readonly ISmtpClient _smtpClient;
-    private readonly INumberGenerator _numberGenerator;
-    private readonly IDiscountCalculator _discountCalculator;
-    private readonly IOrderService _orderService;
+    private readonly ICommandHandler<CreateOrderCommand> _createOrderHandler;
+    private readonly ICommandHandler<AddProductCommand> _addProductHandler;
+    private readonly ICalculateOfferQueryHandler _calculateOfferHandler;
 
-    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, INumberGenerator numberGenerator, IDiscountCalculator discountCalculator, IOrderService orderService)
+    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, 
+      ICommandHandler<CreateOrderCommand> createOrderHandler, 
+      ICommandHandler<AddProductCommand> addProductHandler, 
+      ICalculateOfferQueryHandler calculateOfferHandler)
     {
       _configuration = configuration;
       _smtpClient = smtpClient;
-      _numberGenerator = numberGenerator;
-      _discountCalculator = discountCalculator;
-      _orderService = orderService;
+      _createOrderHandler = createOrderHandler;
+      _addProductHandler = addProductHandler;
+      _calculateOfferHandler = calculateOfferHandler;
     }
 
     [HttpPost("CreateOrder")]
     public ActionResult<string> CreateOrder([FromQuery]string clientId)
     {
       string idf = Guid.NewGuid().ToString();
-      _orderService.CreateOrder(idf, clientId);
+      _createOrderHandler.Handle(new CreateOrderCommand(idf, clientId));
       return Created($"api/Order/{idf}", idf);
     }
     
@@ -59,7 +64,7 @@ namespace PhotoStock.Controllers
     {
       try
       {
-        _orderService.AddProduct(id, productId);
+        _addProductHandler.Handle(new AddProductCommand(id, productId));
       }
       catch (AlreadyExistsException)
       {
@@ -76,7 +81,7 @@ namespace PhotoStock.Controllers
     [HttpGet("Order/{id}/CalculateOffer")]
     public ActionResult<OfferDto> CalculateOffer(string id)
     {
-      var result = _orderService.CalculateOffer(id);
+      var result = _calculateOfferHandler.Handle(new CalculateOfferQuery(id));
       return new OfferDto()
       {
         AvailabeItems = result.AvailabeItems.Select(f =>

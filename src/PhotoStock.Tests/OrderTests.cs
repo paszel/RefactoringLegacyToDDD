@@ -87,7 +87,7 @@ namespace PhotoStock.Tests
     public async Task WholeProcess()
     {
       string orderId = await _api.CreateOrder(_clientId);
-      var products = await _api.GetProducts(null, 10);
+      var products = await _api.GetProducts(null, 10); 
       Product product = products.First(f => f.Name == "Rysunek1");
 
       await _api.AddProductToOrder(orderId, product.Id);
