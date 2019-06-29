@@ -79,5 +79,32 @@ namespace Sales.Domain
 
       return new Offer(ClientId, totalCost - discount, discount, availabeItems, unavailableItems);
     }
+
+    public bool SameAs(Order order)
+    {
+      return ClientId == order.ClientId
+             && Status == order.Status
+             && SameProducts(order.Products);
+    }
+
+    private bool SameProducts(List<OrderItem> products)
+    {
+      if (Products.Count != products.Count)
+      {
+        return false;
+      }
+
+      foreach (OrderItem item in Products)
+      {
+        var r = products.FirstOrDefault(f => f.Id == item.Id);
+        if (r == null || r.ProductId != item.ProductId)
+        {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
   }
 }

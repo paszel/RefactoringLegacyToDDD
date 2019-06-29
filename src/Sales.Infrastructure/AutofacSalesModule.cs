@@ -30,6 +30,8 @@ namespace Sales.Infrastructure
       builder.RegisterType<AddProductHandler>().AsImplementedInterfaces();
       builder.RegisterType<CalculateOfferHandler>().AsImplementedInterfaces();
       builder.RegisterType<OrderFactory>().AsImplementedInterfaces();
+      builder.RegisterType<OrderRepository>().AsImplementedInterfaces();
+      builder.RegisterType<OrderContext>().WithParameter("connectionString", _connectionString);
     }
   }
 }

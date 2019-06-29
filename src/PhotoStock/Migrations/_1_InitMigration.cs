@@ -103,7 +103,7 @@ GO
 CREATE TABLE [dbo].[OrderItem](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[orderId] [varchar](40) NOT NULL,
-	[productId] [int] NOT NULL,
+	[productId] [varchar](40) NOT NULL,
  CONSTRAINT [PK_OrderItem] PRIMARY KEY CLUSTERED 
 (
 	[orderId] ASC,
@@ -145,7 +145,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Product](
-	[id] [int] IDENTITY(1,1) NOT NULL,
+	[id] [varchar](40) NOT NULL,
 	[name] [varchar](50) NOT NULL,
 	[price] [money] NOT NULL,
 	[aviable] [bit] NOT NULL,
