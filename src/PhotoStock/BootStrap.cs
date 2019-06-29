@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
+using Autofac;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,12 +11,12 @@ namespace PhotoStock
 {
   public class Bootstrap
   {
-    public static void Run(string[] args, /*Action<ContainerBuilder> overrideDependencies = null, */ string connectionString = null)
+    public static void Run(string[] args, Action<ContainerBuilder> overrideDependencies = null, string connectionString = null)
     {
-      //if (overrideDependencies != null)
-      //{
-      //  Startup.RegisterExternalTypes = overrideDependencies;
-      //}
+      if (overrideDependencies != null)
+      {
+        Startup.RegisterExternalTypes = overrideDependencies;
+      }
 
       KeyValuePair<string, string> kv = new KeyValuePair<string, string>("ConnectionString", connectionString);
       var c = WebHost.CreateDefaultBuilder(args)

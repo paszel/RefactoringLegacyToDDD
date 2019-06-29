@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using PhotoStock.Controllers;
 
 namespace PhotoStock.Infrastructure
 {
@@ -29,6 +30,8 @@ namespace PhotoStock.Infrastructure
                     //&& !t.IsAssignableTo<ValueObject>() 
                     //&& !t.IsAssignableTo<AggregateRoot>()
           ).AsImplementedInterfaces();
+
+      builder.RegisterType<SmtpClientWrapper>().AsImplementedInterfaces();
 
       //builder.Register(f => f.Resolve<IDiscountFactory>().Create()).AsImplementedInterfaces();
     }

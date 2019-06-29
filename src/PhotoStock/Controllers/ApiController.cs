@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using PhotoStock.Infrastructure;
 
 namespace PhotoStock.Controllers
 {
@@ -17,10 +18,14 @@ namespace PhotoStock.Controllers
   public class ApiController : ControllerBase
   {
     private readonly IConfiguration _configuration;
+    private readonly ISmtpClient _smtpClient;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public ApiController(IConfiguration configuration)
+    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, IDateTimeProvider dateTimeProvider)
     {
       _configuration = configuration;
+      _smtpClient = smtpClient;
+      _dateTimeProvider = dateTimeProvider;
     }
 
     [HttpPost("CreateOrder")]
@@ -38,10 +43,10 @@ namespace PhotoStock.Controllers
     {
       if (_configuration["Environment"] != "PROD")
       {
-        return _configuration["Environment"] + "/Or/" + DateTime.Now;
+        return _configuration["Environment"] + "/Or/" + _dateTimeProvider.Now();
       }
 
-      return "Or/ " + DateTime.Now;
+      return "Or/ " + _dateTimeProvider.Now();
     }
 
     [HttpGet("Products")]
@@ -114,17 +119,17 @@ namespace PhotoStock.Controllers
 
       decimal discount = 0;
       // holiday
-      if (DateTime.Today.Day >= 1 
-          && DateTime.Today.Month >= 7
-          && DateTime.Today.Day <= 30
-          && DateTime.Today.Month <= 8
+      if (_dateTimeProvider.Today.Day >= 1 
+          && _dateTimeProvider.Today.Month >= 7
+          && _dateTimeProvider.Today.Day <= 30
+          && _dateTimeProvider.Today.Month <= 8
           && availabeItems.Any(f => f.ProductType == ProductType.Printed))
       {
         discount = 10;
       }
           
       // grass day
-      if(availabeItems.Any(f => f.Name.Contains("Grass")) && DateTime.Today.Day == 26 && DateTime.Today.Month == 8)
+      if(availabeItems.Any(f => f.Name.Contains("Grass")) && _dateTimeProvider.Today.Day == 26 && _dateTimeProvider.Today.Month == 8)
       {
         discount = 5;
       }
@@ -184,8 +189,7 @@ namespace PhotoStock.Controllers
 
       string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
 
-      SmtpClient c = new SmtpClient("smtp.photostock.com");
-      //c.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
+      _smtpClient.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
 
       InvoiceType invoiceType = CreateConnection().QueryFirst<InvoiceType>("select c.invoiceType from Client c where id = @clientId", new { seenOffer.ClientId });
 
@@ -220,10 +224,8 @@ namespace PhotoStock.Controllers
       OrderDto order = GetOrderInternal(orderId);
 
       string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
-
-
-      SmtpClient c = new SmtpClient("smtp.photostock.com");
-      //c.Send("no-reply@photostock.com", email, "Shipment confirmation", $"your order number : {order.Number} ha been shipped");
+      
+      _smtpClient.Send("no-reply@photostock.com", email, "Shipment confirmation", $"your order number : {order.Number} ha been shipped");
 
       return Ok();
     }
@@ -247,7 +249,7 @@ namespace PhotoStock.Controllers
         "select number from LastInvoiceNumber where invoiceType = @invoiceType;update LastInvoiceNumber set number = number + 1 where invoiceType = @invoiceType",
         new { invoiceType });
 
-      return $"FV {DateTime.Today.Year}/{nr}";
+      return $"FV {_dateTimeProvider.Today.Year}/{nr}";
     }
 
     public decimal CalculateTax(ProductType productType, decimal net)

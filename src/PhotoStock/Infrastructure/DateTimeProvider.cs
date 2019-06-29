@@ -8,5 +8,8 @@ namespace PhotoStock.Infrastructure
     {
       return DateTime.Now;
     }
+
+    public DateTime Today
+    { get; }
   }
 }

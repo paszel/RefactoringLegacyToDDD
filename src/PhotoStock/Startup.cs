@@ -1,15 +1,18 @@
 ﻿using System;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PhotoStock.Infrastructure;
 
 namespace PhotoStock
 {
   public class Startup
   {
-    //public static Action<ContainerBuilder> RegisterExternalTypes { get; set; } = builder => { };
+    public static Action<ContainerBuilder> RegisterExternalTypes { get; set; } = builder => { };
 
     public Startup(IConfiguration configuration)
     {
@@ -23,19 +26,16 @@ namespace PhotoStock
     {
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
       services.AddSingleton(Configuration);
+      
+      var builder = new ContainerBuilder();
+      string connectionString = Configuration["ConnectionString"];
+      builder.RegisterModule(new AutofacInfrastructureModule(connectionString));
+      RegisterExternalTypes(builder);
 
-      // Enable Autofac
-      //var builder = new ContainerBuilder();
-      //string connectionString = Configuration["ConnectionString"];
-      //builder.RegisterModule(new AutofacInfrastructureModule(connectionString));
-      //RegisterExternalTypes(builder);
+      builder.Populate(services);
+      var container = builder.Build();
 
-      //builder.Populate(services);
-      //var container = builder.Build();
-
-      //return new AutofacServiceProvider(container);
-
-      return services.BuildServiceProvider();
+      return new AutofacServiceProvider(container);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
