@@ -10,7 +10,15 @@ namespace PhotoStock.Tests.Migrations
   {
     public override void Up()
     {
-      // Insert.IntoTable("Product").Row(new {Name = "Rysunek1", Price = 10});
+      Insert.IntoTable("Product").Row(new { Name = "Rysunek1", Price = 10 });
+      Insert.IntoTable("Client").Row(new
+      {
+        Id = "aaa111",
+        Name = "Ala makotowska",
+        Credit = 100,
+        CreditLeft = 100,
+        InvoiceType = 1
+      });
     }
   }
 }

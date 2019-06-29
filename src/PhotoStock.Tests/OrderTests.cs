@@ -23,11 +23,11 @@ namespace PhotoStock.Tests
     [OneTimeSetUp]
     public void Setup()
     {
-      //string connectionString = DbTest.CreateEmptyDatabase();
+      string connectionString = DbTest.CreateEmptyDatabase();
 
-      //DbMigrations.Run(connectionString);
+      DbMigrations.Run(connectionString);
 
-      Bootstrap.Run(new string[0]);
+      Bootstrap.Run(new string[0], connectionString);
       
       _clientId = "aaa111";
     }
@@ -43,8 +43,6 @@ namespace PhotoStock.Tests
       await _api.AddProductToOrder(orderId, product.Id);
 
       Offer offer = await _api.CalculateOffer(orderId);
-      // Assert offer / rysunek 1
-
       await _api.Confirm(orderId, offer);
 
       Shipment shipment = await _api.GetShipment(orderId);

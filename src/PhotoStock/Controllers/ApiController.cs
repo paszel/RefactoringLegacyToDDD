@@ -185,7 +185,7 @@ namespace PhotoStock.Controllers
       string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
 
       SmtpClient c = new SmtpClient("smtp.photostock.com");
-      c.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
+      //c.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
 
       InvoiceType invoiceType = CreateConnection().QueryFirst<InvoiceType>("select c.invoiceType from Client c where id = @clientId", new { seenOffer.ClientId });
 
@@ -223,7 +223,7 @@ namespace PhotoStock.Controllers
 
 
       SmtpClient c = new SmtpClient("smtp.photostock.com");
-      c.Send("no-reply@photostock.com", email, "Shipment confirmation", $"your order number : {order.Number} ha been shipped");
+      //c.Send("no-reply@photostock.com", email, "Shipment confirmation", $"your order number : {order.Number} ha been shipped");
 
       return Ok();
     }
