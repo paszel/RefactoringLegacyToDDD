@@ -18,6 +18,7 @@ namespace PhotoStock.Tests
   {
     private static readonly string _url = "http://localhost:5000";
     private readonly IApi _api = RestClient.For<IApi>(_url);
+    private string _clientId;
 
     [OneTimeSetUp]
     public void Setup()
@@ -27,10 +28,34 @@ namespace PhotoStock.Tests
       //DbMigrations.Run(connectionString);
 
       Bootstrap.Run(new string[0]);
-
-      var c = RestClient.For<IApi>(_url);
-
       
+      _clientId = "aaa111";
+    }
+
+    [Test]
+    public async Task WholeProcess()
+    {
+      // Setup
+      string orderId = await _api.CreateOrder(_clientId);
+      var products = await _api.GetProducts(null, 10);
+      Product product = products.First(f => f.Name == "Rysunek1");
+
+      await _api.AddProductToOrder(orderId, product.Id);
+
+      Offer offer = await _api.CalculateOffer(orderId);
+      // Assert offer / rysunek 1
+
+      await _api.Confirm(orderId, offer);
+
+      Shipment shipment = await _api.GetShipment(orderId);
+
+      Assert.AreEqual(ShipmentStatus.WAITING, shipment.Status);
+
+      await _api.Shipped(orderId);
+
+      Shipment shipment2 = await _api.GetShipment(orderId);
+
+      Assert.AreEqual(ShipmentStatus.SHIPPED, shipment2.Status);
     }
   }
 }

@@ -114,21 +114,20 @@ namespace PhotoStock.Controllers
 
       decimal discount = 0;
       // holiday
-      if (_dateTimeProvider.Today.Day >= 1 
-          && _dateTimeProvider.Today.Month >= 7
-          && _dateTimeProvider.Today.Day <= 30
-          && _dateTimeProvider.Today.Month <= 8
+      if (DateTime.Today.Day >= 1 
+          && DateTime.Today.Month >= 7
+          && DateTime.Today.Day <= 30
+          && DateTime.Today.Month <= 8
           && availabeItems.Any(f => f.ProductType == ProductType.Printed))
       {
         discount = 10;
       }
           
       // grass day
-      if(availabeItems.Any(f => f.Name.Contains("Grass")) && _dateTimeProvider.Today.Day == 26 && _dateTimeProvider.Today.Month == 8)
+      if(availabeItems.Any(f => f.Name.Contains("Grass")) && DateTime.Today.Day == 26 && DateTime.Today.Month == 8)
       {
         discount = 5;
       }
-
 
       return new OfferDto(o.ClientId, totalCost-discount, discount, availabeItems, unavailableItems);
     }
@@ -185,7 +184,7 @@ namespace PhotoStock.Controllers
 
       string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
 
-      SmtpClient c = new SmtpClient();
+      SmtpClient c = new SmtpClient("smtp.photostock.com");
       c.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
 
       InvoiceType invoiceType = CreateConnection().QueryFirst<InvoiceType>("select c.invoiceType from Client c where id = @clientId", new { seenOffer.ClientId });
@@ -223,7 +222,7 @@ namespace PhotoStock.Controllers
       string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
 
 
-      SmtpClient c = new SmtpClient();
+      SmtpClient c = new SmtpClient("smtp.photostock.com");
       c.Send("no-reply@photostock.com", email, "Shipment confirmation", $"your order number : {order.Number} ha been shipped");
 
       return Ok();

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -26,7 +28,25 @@ namespace PhotoStock
 
 
       ThreadPool.QueueUserWorkItem(state => { c.Build().Run(); });
-      Thread.Sleep(100);
+
+      var client = new HttpClient();
+
+      for (int i = 0; i < 10; i++)
+      {
+        try
+        {
+          client.GetStringAsync("http://localhost:5000/api/products").Wait();
+          break;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine($"Connecting ({i}) ...");
+          if (i == 9)
+          {
+            throw new Exception("Giving up");
+          }
+        }
+      }
     }
   }
 
