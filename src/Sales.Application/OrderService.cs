@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using Dapper;
-using Sales.Application.ToRemove;
 using Sales.Domain;
 
 namespace Sales.Application
@@ -20,38 +18,34 @@ namespace Sales.Application
       _configuration = configuration;
     }
 
-    public string CreateOrder(string clientId)
+    public void CreateOrder(string id, string clientId)
     {
-      string id = Guid.NewGuid().ToString();
+      // create
       string number = _numberGenerator.GenerateNumber();
-      CreateConnection().Execute("INSERT INTO [Order](id,number,clientId) VALUES(@id,@number,@clientId)",
-        new { id, number, clientId });
-      return id;
+      Order o = new Order(clientId, id, number, OrderStatus.New);
+
+      // Save
+      CreateConnection().Execute("INSERT INTO [Order](id,number,clientId) VALUES(@id,@number,@clientId)", o);
     }
 
     public void AddProduct(string orderId, string productId)
     {
-      OrderDto order = GetOrderInternal(orderId);
-      if (order.Status != OrderStatus.New)
-      {
-        throw new NotFoundException();
-      }
+      // Get
+      Order order = GetOrderInternal(orderId);
 
-      if (order.Products.FirstOrDefault(f => f.Id == productId) != null)
-      {
-        throw new AlreadyExistsException("Product already exists");
-      }
-
+      // Act
+      order.AddProduct(productId);
+      
+      // Save
       CreateConnection().Execute(
         "insert into OrderItem(orderId, productId)values(@orderId,@productId)",
         new { orderId = orderId, productId });
-
     }
 
-    private OrderDto GetOrderInternal(string id)
+    private Order GetOrderInternal(string id)
     {
-      OrderDto o = CreateConnection().QueryFirst<OrderDto>("select * from [order] where id = @id", new { id });
-      o.Products = CreateConnection().Query<ProductDto>("select p.* from product p join OrderItem p2o on p.id = p2o.productId where p2o.orderId = @id", new { id }).ToList();
+      Order o = CreateConnection().QueryFirst<Order>("select * from [order] where id = @id", new { id });
+      o.Products = CreateConnection().Query<OrderItem>("select p.Id as ProductId from product p join OrderItem p2o on p.id = p2o.productId where p2o.orderId = @id", new { id }).ToList();
       return o;
     }
 

@@ -2,7 +2,7 @@
 {
   public interface IOrderService
   {
-    string CreateOrder( string clientId);
+    void CreateOrder(string orderId, string clientId);
     void AddProduct(string orderId, string productId);
   }
 }

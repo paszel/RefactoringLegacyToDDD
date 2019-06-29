@@ -36,8 +36,9 @@ namespace PhotoStock.Controllers
     [HttpPost("CreateOrder")]
     public ActionResult<string> CreateOrder([FromQuery]string clientId)
     {
-      string id = _orderService.CreateOrder(clientId);
-      return Created($"api/Order/{id}", id);
+      string idf = Guid.NewGuid().ToString();
+      _orderService.CreateOrder(idf, clientId);
+      return Created($"api/Order/{idf}", idf);
     }
     
 

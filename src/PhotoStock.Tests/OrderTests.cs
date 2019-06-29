@@ -25,6 +25,7 @@ namespace PhotoStock.Tests
     private readonly IApi _api = RestClient.For<IApi>(_url);
     private string _clientId;
     private SmtpTestClient _smtpClient;
+    private ConfigurationRoot _configuration;
 
     [OneTimeSetUp]
     public void Setup()
@@ -88,7 +89,7 @@ namespace PhotoStock.Tests
       await _api.AddProductToOrder(orderId, product.Id);
 
       Offer offer = await _api.CalculateOffer(orderId);
-      await _api.Confirm(orderId, offer);    
+      await _api.Confirm(orderId, offer);
 
       Shipment shipment = await _api.GetShipment(orderId);
 
