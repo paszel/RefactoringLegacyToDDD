@@ -4,12 +4,8 @@ namespace PhotoStock.Infrastructure
 {
   class DateTimeProvider : IDateTimeProvider
   {
-    public DateTime Now()
-    {
-      return DateTime.Now;
-    }
+    public DateTime Now => DateTime.Now;
 
-    public DateTime Today
-    { get; }
+    public DateTime Today => DateTime.Today;
   }
 }

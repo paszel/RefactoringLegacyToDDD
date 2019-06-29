@@ -19,19 +19,23 @@ namespace PhotoStock.Controllers
   {
     private readonly IConfiguration _configuration;
     private readonly ISmtpClient _smtpClient;
+    private readonly INumberGenerator _numberGenerator;
+    private readonly IDiscountCalculator _discountCalculator;
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, IDateTimeProvider dateTimeProvider)
+    public ApiController(IConfiguration configuration, ISmtpClient smtpClient, INumberGenerator numberGenerator, IDiscountCalculator discountCalculator, IDateTimeProvider dateTimeProvider)
     {
       _configuration = configuration;
       _smtpClient = smtpClient;
+      _numberGenerator = numberGenerator;
+      _discountCalculator = discountCalculator;
       _dateTimeProvider = dateTimeProvider;
     }
 
     [HttpPost("CreateOrder")]
     public ActionResult<string> CreateOrder([FromQuery]string clientId)
     {
-      string number = GenerateNumber();
+      string number = _numberGenerator.GenerateNumber();
       string id = Guid.NewGuid().ToString();
       CreateConnection().Execute("INSERT INTO [Order](id,number,clientId) VALUES(@id,@number,@clientId)",
         new { id, number, clientId });
@@ -39,15 +43,7 @@ namespace PhotoStock.Controllers
       return Created($"api/Order/{id}", id);
     }
 
-    private string GenerateNumber()
-    {
-      if (_configuration["Environment"] != "PROD")
-      {
-        return _configuration["Environment"] + "/Or/" + _dateTimeProvider.Now();
-      }
-
-      return "Or/ " + _dateTimeProvider.Now();
-    }
+    
 
     [HttpGet("Products")]
     public ActionResult<IEnumerable<ProductDto>> Get([FromQuery]string fromId, [FromQuery]int count)
@@ -117,23 +113,8 @@ namespace PhotoStock.Controllers
         }
       }
 
-      decimal discount = 0;
-      // holiday
-      if (_dateTimeProvider.Today.Day >= 1 
-          && _dateTimeProvider.Today.Month >= 7
-          && _dateTimeProvider.Today.Day <= 30
-          && _dateTimeProvider.Today.Month <= 8
-          && availabeItems.Any(f => f.ProductType == ProductType.Printed))
-      {
-        discount = 10;
-      }
-          
-      // grass day
-      if(availabeItems.Any(f => f.Name.Contains("Grass")) && _dateTimeProvider.Today.Day == 26 && _dateTimeProvider.Today.Month == 8)
-      {
-        discount = 5;
-      }
-
+      decimal discount = _discountCalculator.Calculate(_dateTimeProvider.Today, availabeItems);
+      
       return new OfferDto(o.ClientId, totalCost-discount, discount, availabeItems, unavailableItems);
     }
 
@@ -249,7 +230,7 @@ namespace PhotoStock.Controllers
         "select number from LastInvoiceNumber where invoiceType = @invoiceType;update LastInvoiceNumber set number = number + 1 where invoiceType = @invoiceType",
         new { invoiceType });
 
-      return $"FV {_dateTimeProvider.Today.Year}/{nr}";
+      return $"FV {DateTime.Today.Year}/{nr}";
     }
 
     public decimal CalculateTax(ProductType productType, decimal net)

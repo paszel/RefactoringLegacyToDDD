@@ -23,7 +23,6 @@ namespace PhotoStock.Tests
     private readonly IApi _api = RestClient.For<IApi>(_url);
     private string _clientId;
     private SmtpTestClient _smtpClient;
-    private TestDateTimeProvider _dateTimeProvider;
 
     [OneTimeSetUp]
     public void Setup()
@@ -33,16 +32,10 @@ namespace PhotoStock.Tests
       DbMigrations.Run(connectionString);
 
       _smtpClient = new SmtpTestClient();
-      _dateTimeProvider = new TestDateTimeProvider();
-      _dateTimeProvider.Current = new DateTime(1999,1,1);
 
-      Bootstrap.Run(new string[0], builder =>
-      {
-        builder.RegisterInstance(_dateTimeProvider);
-        builder.RegisterInstance(_smtpClient).AsImplementedInterfaces();
-      }, connectionString);
+      Bootstrap.Run(new string[0], builder => { builder.RegisterInstance(_smtpClient).AsImplementedInterfaces(); }, connectionString);
       
-      _clientId = "aaa111";
+      _clientId = TestSeeding.ClientId;
     }
 
     [Test]
@@ -54,8 +47,9 @@ namespace PhotoStock.Tests
       Product product = products.First(f => f.Name == "Rysunek1");
 
       await _api.AddProductToOrder(orderId, product.Id);
-
+      
       Offer offer = await _api.CalculateOffer(orderId);
+      
       await _api.Confirm(orderId, offer);
 
       Shipment shipment = await _api.GetShipment(orderId);
@@ -71,21 +65,6 @@ namespace PhotoStock.Tests
       Assert.AreEqual(ShipmentStatus.SHIPPED, shipment2.Status);
       Assert.AreEqual(2, _smtpClient.SentEmails.Count);
       Assert.AreEqual(TestSeeding.ClientEmail, _smtpClient.SentEmails[1].Recipients);
-    }
-  }
-
-  public class TestDateTimeProvider : IDateTimeProvider
-  {
-    public DateTime Current { get; set; }
-
-    public DateTime Now()
-    {
-      return Current;
-    }
-
-    public DateTime Today
-    {
-      get { return Now().Date; }
     }
   }
 }

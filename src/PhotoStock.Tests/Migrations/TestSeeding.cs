@@ -9,13 +9,14 @@ namespace PhotoStock.Tests.Migrations
   public class TestSeeding : FluentMigrator.ForwardOnlyMigration
   {
     public static string ClientEmail = "ala.makotowska@example.com";
+    public static string ClientId = "aaa111";
 
     public override void Up()
     {
       Insert.IntoTable("Product").Row(new {Name = "Rysunek1", Price = 10});
       Insert.IntoTable("Client").Row(new
       {
-        Id = "aaa111",
+        Id = ClientId,
         Name = "Ala makotowska",
         Credit = 100,
         CreditLeft = 100,

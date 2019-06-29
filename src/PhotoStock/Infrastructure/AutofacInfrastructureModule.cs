@@ -32,6 +32,8 @@ namespace PhotoStock.Infrastructure
           ).AsImplementedInterfaces();
 
       builder.RegisterType<SmtpClientWrapper>().AsImplementedInterfaces();
+      builder.RegisterType<NumberGenerator>().AsImplementedInterfaces();
+      builder.RegisterType<DiscountCalculator>().AsImplementedInterfaces();
 
       //builder.Register(f => f.Resolve<IDiscountFactory>().Create()).AsImplementedInterfaces();
     }
