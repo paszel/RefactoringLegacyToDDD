@@ -44,6 +44,12 @@ namespace PhotoStock.Tests
       _clientId = "aaa111";
     }
 
+    [SetUp]
+    public void SetUp()
+    {
+      _smtpClient.SentEmails.Clear();
+    }
+
     [Test]
     public async Task AddProductToOrder_should_return_not_found_when_order_confirmed()
     {

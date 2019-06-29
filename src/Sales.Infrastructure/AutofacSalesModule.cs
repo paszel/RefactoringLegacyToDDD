@@ -20,6 +20,7 @@ namespace Sales.Infrastructure
       builder.RegisterType<DateTimeProvider>().AsImplementedInterfaces();
       builder.RegisterType<OrderService>().AsImplementedInterfaces();
       builder.RegisterType<ConfigurationWrapper>().AsImplementedInterfaces();
+      builder.RegisterType<ProductRepository>().AsImplementedInterfaces();
     }
   }
 }

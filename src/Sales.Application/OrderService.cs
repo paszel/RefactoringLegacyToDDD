@@ -11,35 +11,40 @@ namespace Sales.Application
   {
     private readonly INumberGenerator _numberGenerator;
     private readonly IConfiguration _configuration;
+    private readonly IDiscountCalculator _discountCalculator;
+    private readonly IProductRepository _productRepository;
 
-    public OrderService(INumberGenerator numberGenerator, IConfiguration configuration)
+    public OrderService(INumberGenerator numberGenerator, IConfiguration configuration, IDiscountCalculator discountCalculator, IProductRepository productRepository)
     {
       _numberGenerator = numberGenerator;
       _configuration = configuration;
+      _discountCalculator = discountCalculator;
+      _productRepository = productRepository;
     }
 
     public void CreateOrder(string id, string clientId)
     {
-      // create
       string number = _numberGenerator.GenerateNumber();
-      Order o = new Order(clientId, id, number, OrderStatus.New);
 
-      // Save
+      Order o = new Order(){ ClientId = clientId, Id = id, Number = number, Status = OrderStatus.New };
+
       CreateConnection().Execute("INSERT INTO [Order](id,number,clientId) VALUES(@id,@number,@clientId)", o);
     }
 
     public void AddProduct(string orderId, string productId)
     {
-      // Get
       Order order = GetOrderInternal(orderId);
-
-      // Act
       order.AddProduct(productId);
       
-      // Save
       CreateConnection().Execute(
         "insert into OrderItem(orderId, productId)values(@orderId,@productId)",
         new { orderId = orderId, productId });
+    }
+
+    public Offer CalculateOffer(string orderId)
+    {
+      Order order = GetOrderInternal(orderId);
+      return order.CalculateOffer(_discountCalculator, _productRepository);
     }
 
     private Order GetOrderInternal(string id)

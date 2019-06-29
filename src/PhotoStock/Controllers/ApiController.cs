@@ -75,46 +75,17 @@ namespace PhotoStock.Controllers
     [HttpGet("Order/{id}/CalculateOffer")]
     public ActionResult<OfferDto> CalculateOffer(string id)
     {
-      OrderDto o = GetOrderInternal(id);
-
-      if (o.Status != OrderStatus.New)
+      var result = _orderService.CalculateOffer(id);
+      return new OfferDto()
       {
-        return NotFound();
-      }
-
-      List<OfferItemDto> availabeItems = new List<OfferItemDto>();
-      List<OfferItemDto> unavailableItems = new List<OfferItemDto>();
-
-      decimal totalCost = 0;
-      foreach (ProductDto product in o.Products)
-      {
-        if (product.Aviable)
-        {
-          OfferItemDto offerItem = new OfferItemDto()
-          {
-            Id = product.Id,
-            Name = product.Name,
-            Price = product.Price
-          };
-
-          availabeItems.Add(offerItem);
-          totalCost += offerItem.Price;
-        }
-        else
-        {
-          OfferItemDto offerItem = new OfferItemDto { Id = product.Id, Name = product.Name, Price = product.Price };
-
-          unavailableItems.Add(offerItem);
-        }
-      }
-
-      decimal discount = _discountCalculator.Calculate(availabeItems.Select(f => new OfferItem()
-      {
-        Name = f.Name,
-        ProductType = (Sales.Domain.ProductType)f.ProductType
-      }));
-
-      return new OfferDto(o.ClientId, totalCost - discount, discount, availabeItems, unavailableItems);
+        AvailabeItems = result.AvailabeItems.Select(f =>
+            new OfferItemDto() {Id = f.Id, Price = f.Price, Name = f.Name, ProductType = (ProductType) f.ProductType}).ToList(),
+        UnavailableItems = result.UnavailableItems.Select(f =>
+            new OfferItemDto() {Id = f.Id, Price = f.Price, Name = f.Name, ProductType = (ProductType) f.ProductType}).ToList(),
+        Discount = result.Discount,
+        TotalCost = result.TotalCost,
+        ClientId = result.ClientId
+      };
     }
 
     [HttpPost("Order/{orderId}/Confirm")]

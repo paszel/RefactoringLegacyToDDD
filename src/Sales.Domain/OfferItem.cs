@@ -5,6 +5,6 @@
     public ProductType ProductType { get; set; }
     public string Name { get; set; }
     public string Id { get; set; }
-    public int Price { get; set; }
+    public Money Price { get; set; }
   }
 }
