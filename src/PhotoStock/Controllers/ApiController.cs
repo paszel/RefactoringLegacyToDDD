@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using PhotoStock.Infrastructure;
 using Sales.Application;
 using Sales.Application.AddProduct;
 using Sales.Application.CalculateOffer;
@@ -23,27 +24,23 @@ namespace PhotoStock.Controllers
   {
     private readonly IConfiguration _configuration;
     private readonly ISmtpClient _smtpClient;
-    private readonly ICommandHandler<CreateOrderCommand> _createOrderHandler;
-    private readonly ICommandHandler<AddProductCommand> _addProductHandler;
     private readonly ICalculateOfferQueryHandler _calculateOfferHandler;
+    private readonly ICommandBus _commandBus;
 
     public ApiController(IConfiguration configuration, ISmtpClient smtpClient, 
-      ICommandHandler<CreateOrderCommand> createOrderHandler, 
-      ICommandHandler<AddProductCommand> addProductHandler, 
-      ICalculateOfferQueryHandler calculateOfferHandler)
+      ICalculateOfferQueryHandler calculateOfferHandler, ICommandBus commandBus)
     {
       _configuration = configuration;
       _smtpClient = smtpClient;
-      _createOrderHandler = createOrderHandler;
-      _addProductHandler = addProductHandler;
       _calculateOfferHandler = calculateOfferHandler;
+      _commandBus = commandBus;
     }
 
     [HttpPost("CreateOrder")]
     public ActionResult<string> CreateOrder([FromQuery]string clientId)
     {
       string idf = Guid.NewGuid().ToString();
-      _createOrderHandler.Handle(new CreateOrderCommand(idf, clientId));
+      _commandBus.Send(new CreateOrderCommand(idf, clientId));
       return Created($"api/Order/{idf}", idf);
     }
     
@@ -64,7 +61,7 @@ namespace PhotoStock.Controllers
     {
       try
       {
-        _addProductHandler.Handle(new AddProductCommand(id, productId));
+        _commandBus.Send(new AddProductCommand(id, productId));
       }
       catch (AlreadyExistsException)
       {
