@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Sales.Application;
 using Sales.Domain;
+using Sales.Domain.Discount;
 
 namespace Sales.Infrastructure
 {
@@ -21,6 +22,7 @@ namespace Sales.Infrastructure
       builder.RegisterType<OrderService>().AsImplementedInterfaces();
       builder.RegisterType<ConfigurationWrapper>().AsImplementedInterfaces();
       builder.RegisterType<ProductRepository>().AsImplementedInterfaces();
+      builder.RegisterType<DiscountSpecificationFactory>().AsImplementedInterfaces();
     }
   }
 }

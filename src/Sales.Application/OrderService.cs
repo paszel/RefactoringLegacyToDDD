@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Dapper;
 using Sales.Domain;
+using Sales.Domain.Discount;
 
 namespace Sales.Application
 {

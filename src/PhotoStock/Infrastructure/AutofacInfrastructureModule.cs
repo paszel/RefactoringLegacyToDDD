@@ -2,6 +2,7 @@
 using Autofac;
 using PhotoStock.Controllers;
 using Sales.Domain;
+using Sales.Domain.Discount;
 
 namespace PhotoStock.Infrastructure
 {

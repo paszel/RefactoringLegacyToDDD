@@ -71,7 +71,6 @@ namespace PhotoStock.Tests
     [Test]
     public async Task AddProductToOrder_should_return_bad_request_when_product_added()
     {
-      // Setup
       string orderId = await _api.CreateOrder(_clientId);
       var products = await _api.GetProducts(null, 10);
       Product product = products.First(f => f.Name == "Rysunek1");
@@ -87,7 +86,6 @@ namespace PhotoStock.Tests
     [Test]
     public async Task WholeProcess()
     {
-      // Setup
       string orderId = await _api.CreateOrder(_clientId);
       var products = await _api.GetProducts(null, 10);
       Product product = products.First(f => f.Name == "Rysunek1");

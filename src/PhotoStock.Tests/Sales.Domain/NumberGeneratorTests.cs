@@ -23,7 +23,7 @@ namespace PhotoStock.Tests.Sales.Domain
     [Test]
     public void Genrate_should_return_nuber_with_demo_prefix()
     {
-      // Setup
+      // Arrange
       _dateTimeProviderMock.Setup(f => f.Now).Returns(new DateTime(2020, 12, 24));
       _configurationMock.Setup(f => f["Environment"]).Returns("DEMO");
 

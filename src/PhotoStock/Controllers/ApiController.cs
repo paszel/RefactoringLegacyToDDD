@@ -1,6 +1,7 @@
 ﻿using System.Net.Mail;
 using Sales.Application;
 using Sales.Domain;
+using Sales.Domain.Discount;
 
 namespace PhotoStock.Controllers
 {
