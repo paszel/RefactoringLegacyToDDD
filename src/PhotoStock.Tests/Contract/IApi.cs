@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NUnitTestProject1;
 using RestEase;
 
 namespace PhotoStock.Tests.Contract

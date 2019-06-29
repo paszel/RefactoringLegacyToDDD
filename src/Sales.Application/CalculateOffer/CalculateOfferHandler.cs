@@ -3,6 +3,7 @@ using System.Linq;
 using Dapper;
 using Sales.Domain;
 using Sales.Domain.Discount;
+using Sales.Domain.Product;
 
 namespace Sales.Application.CalculateOffer
 {

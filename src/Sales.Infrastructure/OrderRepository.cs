@@ -10,9 +10,9 @@ namespace Sales.Infrastructure
   public class OrderRepository : IOrderRepository
   {
     private readonly OrderContext _context;
-    private readonly IEventBus _eventBus;
+    private readonly IEventPublisher _eventBus;
 
-    public OrderRepository(OrderContext context, IEventBus eventBus)
+    public OrderRepository(OrderContext context, IEventPublisher eventBus)
     {
       _context = context;
       _eventBus = eventBus;

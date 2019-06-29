@@ -8,7 +8,6 @@ using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
-using NUnitTestProject1;
 using PhotoStock.Controllers;
 using PhotoStock.Infrastructure;
 using PhotoStock.Tests.Contract;

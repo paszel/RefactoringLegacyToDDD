@@ -1,8 +1,11 @@
 ﻿using System.Net.Mail;
+using PhotoStock.BusInterfaces;
 using PhotoStock.Infrastructure;
+using Processes;
 using Sales.Application;
 using Sales.Application.AddProduct;
 using Sales.Application.CalculateOffer;
+using Sales.Application.CreateOrder;
 using Sales.Domain;
 using Sales.Domain.Discount;
 
@@ -94,57 +97,26 @@ namespace PhotoStock.Controllers
     [HttpPost("Order/{orderId}/Confirm")]
     public ActionResult Confirm([FromRoute]string orderId, [FromBody] OfferDto seenOffer)
     {
-      OfferDto offer = CalculateOffer(orderId).Value;
+      _commandBus.Send(new ProcessOrderConfirmationCommand(orderId, new Offer(
+        seenOffer.ClientId, 
+        seenOffer.TotalCost,
+        seenOffer.Discount,
+        seenOffer.AvailabeItems.Select(f=>new OfferItem(f.Id,f.Name,f.Price, (Sales.Domain.Product.ProductType)f.ProductType,f.Discount)).ToList(),
+        seenOffer.UnavailableItems.Select(f => new OfferItem(f.Id, f.Name, f.Price, (Sales.Domain.Product.ProductType)f.ProductType, f.Discount)).ToList())));
 
-      if (offer.AvailabeItems.Count != seenOffer.AvailabeItems.Count)
-      {
-        return BadRequest("Order changed");
-      }
+      ConfirmOrder(orderId, seenOffer);
 
-      if (offer.TotalCost != seenOffer.TotalCost || offer.ClientId != seenOffer.ClientId)
-      {
-        return BadRequest("Order changed");
-      }
-      foreach (OfferItemDto item in offer.AvailabeItems)
-      {
-        var seenProduct = seenOffer.AvailabeItems.FirstOrDefault(f => f.Id == item.Id);
-        if (seenProduct == null)
-          return BadRequest("Order changed");
-        if (item.Price != seenProduct.Price)
-          return BadRequest("Order changed");
-      }
+      CreateShipment(orderId);
 
-      decimal credit = CreateConnection()
-        .QueryFirst<decimal>("select creditLeft from Client where id = @id", new { id = offer.ClientId });
+      SendConfirmation(orderId);
 
-      if (credit < seenOffer.TotalCost)
-      {
-        return BadRequest("Insufficient credit");
-      }
+      CreateInvoice(orderId, seenOffer);
+      
+      return Ok();
+    }
 
-      CreateConnection()
-          .Execute("update Client set creditLeft = @amount where id = @id", new { amount = seenOffer.TotalCost, id = offer.ClientId });
-
-
-      XmlSerializer xmlSerializer = new XmlSerializer(typeof(OfferDto));
-      using (StringWriter sw = new StringWriter())
-      {
-        xmlSerializer.Serialize(sw, seenOffer);
-        CreateConnection()
-          .Execute("insert OrderSnapshot(orderId, orderData)values(@id,@orderData)",
-            new { id = orderId, orderData = sw.GetStringBuilder().ToString() });
-      }
-
-      CreateConnection().Execute("update [Order] set Status = @status where id = @orderId", new { orderId, status = OrderStatus.Paid });
-
-      CreateConnection().Execute("insert into Shipment(orderId, status)values(@id, 1)", new { id = orderId });
-
-      var order = GetOrderInternal(orderId);
-
-      string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
-
-      _smtpClient.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
-
+    private void CreateInvoice(string orderId, OfferDto seenOffer)
+    {
       InvoiceType invoiceType = CreateConnection().QueryFirst<InvoiceType>("select c.invoiceType from Client c where id = @clientId", new { seenOffer.ClientId });
 
       decimal net = seenOffer.TotalCost;
@@ -161,6 +133,26 @@ namespace PhotoStock.Controllers
             new { invoiceId = orderId, productName = oProduct.Name, net, tax });
       }
 
+    }
+
+    private void SendConfirmation(string orderId)
+    {
+      var order = GetOrderInternal(orderId);
+
+      string email = CreateConnection().QueryFirst<string>("select email from client where id = @id", new { id = order.ClientId });
+
+      _smtpClient.Send("no-reply@photostock.com", email, "Order confirmation", $"your order (number: {order.Number}) has been queued for shipment");
+
+    }
+
+    private void CreateShipment(string orderId)
+    {
+      CreateConnection().Execute("insert into Shipment(orderId, status)values(@id, 1)", new { id = orderId });
+    }
+
+    private void ConfirmOrder(string orderId, OfferDto seenOffer)
+    {
+      
       return Ok();
     }
 

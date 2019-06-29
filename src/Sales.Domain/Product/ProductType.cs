@@ -1,4 +1,4 @@
-namespace PhotoStock.Tests.Contract
+﻿namespace Sales.Domain.Product
 {
   public enum ProductType
   {

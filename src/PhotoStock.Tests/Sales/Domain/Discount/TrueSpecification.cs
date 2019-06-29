@@ -2,7 +2,7 @@
 using Sales.Domain;
 using Sales.Domain.Specification;
 
-namespace PhotoStock.Tests.Sales.Domain
+namespace PhotoStock.Tests.Sales.Domain.Discount
 {
   public class TrueSpecification : CompositeSpecification<IEnumerable<OfferItem>>
   {

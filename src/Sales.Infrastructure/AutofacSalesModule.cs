@@ -23,7 +23,7 @@ namespace Sales.Infrastructure
       builder.RegisterType<DiscountCalculator>().AsImplementedInterfaces();
       builder.RegisterType<DateTimeProvider>().AsImplementedInterfaces();
       builder.RegisterType<CalculateOfferHandler>().AsImplementedInterfaces();
-      builder.RegisterType<ConfigurationWrapper>().AsImplementedInterfaces();
+      builder.RegisterType<ConfigurationAdapter>().AsImplementedInterfaces();
       builder.RegisterType<ProductRepository>().AsImplementedInterfaces();
       builder.RegisterType<DiscountSpecificationFactory>().AsImplementedInterfaces();
 
@@ -32,6 +32,7 @@ namespace Sales.Infrastructure
       builder.RegisterType<CalculateOfferHandler>().AsImplementedInterfaces();
       builder.RegisterType<OrderFactory>().AsImplementedInterfaces();
       builder.RegisterType<OrderRepository>().AsImplementedInterfaces();
+      builder.RegisterType<EventPublisherAdapter>().AsImplementedInterfaces();
       builder.RegisterType<OrderContext>().WithParameter("connectionString", _connectionString);
     }
   }

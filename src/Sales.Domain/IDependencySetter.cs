@@ -2,6 +2,6 @@
 {
   public interface IDependencySetter
   {
-    void SetEventPublisher(IEventBus eventBus);
+    void SetEventPublisher(IEventPublisher eventBus);
   }
 }

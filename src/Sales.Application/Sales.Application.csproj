@@ -9,6 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PhotoStock.BusInterfaces\PhotoStock.BusInterfaces.csproj" />
+    <ProjectReference Include="..\Processes\Processes.csproj" />
     <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
   </ItemGroup>
 

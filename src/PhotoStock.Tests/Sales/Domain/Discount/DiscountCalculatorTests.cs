@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using Sales.Domain;
 using Sales.Domain.Discount;
 
-namespace PhotoStock.Tests.Sales.Domain
+namespace PhotoStock.Tests.Sales.Domain.Discount
 {
   [TestFixture]
   public class DiscountCalculatorTests

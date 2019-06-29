@@ -31,9 +31,9 @@
     private int _version;
 
     private AggregateStatus _aggregateStatus = AggregateStatus.ACTIVE;
-    private IEventBus _eventBus;
+    private IEventPublisher _eventBus;
 
-    protected IEventBus EventPublisher => _eventBus;
+    protected IEventPublisher EventPublisher => _eventBus;
 
     public AggregateRoot(string id)
     {
@@ -50,7 +50,7 @@
       _aggregateStatus = AggregateStatus.ARCHIVE;
     }
 
-    void IDependencySetter.SetEventPublisher(IEventBus eventBus)
+    void IDependencySetter.SetEventPublisher(IEventPublisher eventBus)
     {
       _eventBus = eventBus;
     }

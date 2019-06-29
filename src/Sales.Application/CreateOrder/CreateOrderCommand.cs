@@ -1,4 +1,4 @@
-﻿namespace Sales.Application
+﻿namespace Sales.Application.CreateOrder
 {
   public class CreateOrderCommand
   {

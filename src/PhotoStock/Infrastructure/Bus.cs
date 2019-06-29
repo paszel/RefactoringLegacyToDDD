@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autofac;
 using Microsoft.Extensions.Logging;
+using PhotoStock.BusInterfaces;
 using Sales.Application;
 using Sales.Domain;
 

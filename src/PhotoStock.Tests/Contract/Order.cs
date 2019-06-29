@@ -1,5 +1,3 @@
-using NUnitTestProject1;
-
 namespace PhotoStock.Tests.Contract
 {
   public class Order

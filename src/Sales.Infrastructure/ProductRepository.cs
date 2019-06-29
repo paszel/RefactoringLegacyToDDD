@@ -1,6 +1,7 @@
 using System.Data.SqlClient;
 using Dapper;
 using Sales.Domain;
+using Sales.Domain.Product;
 
 namespace Sales.Infrastructure
 {
