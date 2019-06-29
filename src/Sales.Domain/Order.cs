@@ -80,6 +80,11 @@ namespace Sales.Domain
       return new Offer(_clientId, totalCost - discount, discount, availabeItems, unavailableItems);
     }
 
+    public void SetStatus(OrderStatus status)
+    {
+      _status = status;
+    }
+
     public bool SameAs(Order order)
     {
       return _clientId == order._clientId

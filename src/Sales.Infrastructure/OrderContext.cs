@@ -27,6 +27,7 @@ namespace Sales.Infrastructure
         c.Property("_status").HasColumnName("status");
         c.Property("_number").HasColumnName("number");
         c.Property("_clientId").HasColumnName("clientId");
+        c.Property("_version").IsConcurrencyToken().HasColumnName("version");
         c.HasMany<OrderItem>("_products");
       });
       modelBuilder.Entity<OrderItem>(c =>

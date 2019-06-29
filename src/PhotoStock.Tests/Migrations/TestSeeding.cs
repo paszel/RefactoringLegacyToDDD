@@ -10,10 +10,14 @@ namespace PhotoStock.Tests.Migrations
   {
     public static string ClientEmail = "ala.makotowska@example.com";
     public static string ProductId = "P1";
+    public static string Product2Id = "P2";
+    public static string Product3Id = "P3";
 
     public override void Up()
     {
       Insert.IntoTable("Product").Row(new {Id = ProductId, Name = "Rysunek1", Price = 10});
+      Insert.IntoTable("Product").Row(new { Id = Product2Id, Name = "Rysunek2", Price = 11 });
+      Insert.IntoTable("Product").Row(new { Id = Product3Id, Name = "Rysunek3", Price = 4 });
       Insert.IntoTable("Client").Row(new
       {
         Id = "aaa111",

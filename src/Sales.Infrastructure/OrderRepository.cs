@@ -31,6 +31,10 @@ namespace Sales.Infrastructure
       {
         _context.Set<Order>().Add(order);
       }
+      else
+      {
+        order.IncreaseVersion();
+      }
 
       _context.SaveChanges();
     }

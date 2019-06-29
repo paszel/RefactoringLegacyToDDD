@@ -28,7 +28,8 @@
     private string _id;
     public string Id => _id;
 
-    public int Version { get; }
+    private int _version;
+
     private AggregateStatus _aggregateStatus = AggregateStatus.ACTIVE;
     private IEventBus _eventBus;
 
@@ -37,6 +38,11 @@
     public AggregateRoot(string id)
     {
       _id = id;
+    }
+
+    public void IncreaseVersion()
+    {
+      _version++;
     }
 
     public void MarkAsRemoved()
