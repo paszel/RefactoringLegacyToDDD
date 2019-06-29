@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.539
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoStock.Tests", "src\PhotoStock.Tests\PhotoStock.Tests.csproj", "{BDE56D61-FFF0-46F1-84BE-795A45550977}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoStock", "src\PhotoStock\PhotoStock.csproj", "{C86D13FB-1635-4E54-AC54-223F2FED4AFB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{11122D5E-0D3F-4D0C-83C4-79FEAD30C388}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Photostock.md = docs\Photostock.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDE56D61-FFF0-46F1-84BE-795A45550977}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDE56D61-FFF0-46F1-84BE-795A45550977}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDE56D61-FFF0-46F1-84BE-795A45550977}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDE56D61-FFF0-46F1-84BE-795A45550977}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C86D13FB-1635-4E54-AC54-223F2FED4AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C86D13FB-1635-4E54-AC54-223F2FED4AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C86D13FB-1635-4E54-AC54-223F2FED4AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C86D13FB-1635-4E54-AC54-223F2FED4AFB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA126B13-7A81-4B4D-8CA6-E7C769CEC74A}
+	EndGlobalSection
+EndGlobal
